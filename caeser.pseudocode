@@ -1,0 +1,28 @@
+FUNCTION ENCRYPT(text, shift):
+    uppercase ← "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    lowercase ← "abcdefghijklmnopqrstuvwxyz"
+    result ← empty string
+    shift ← shift MOD 26
+
+    FOR EACH character IN text:
+        IF character is in uppercase:
+            alphabet ← uppercase
+        ELSE IF character is in lowercase:
+            alphabet ← lowercase
+        ELSE:
+            append character unchanged to result
+            CONTINUE to the next character
+
+        position ← index of character in alphabet
+        new_position ← position + shift
+
+        IF new_position ≥ 26:
+            new_position ← new_position − 26
+
+        append alphabet[new_position] to result
+
+    RETURN result
+
+
+FUNCTION DECRYPT(text, shift):
+    RETURN ENCRYPT(text, negative shift)
