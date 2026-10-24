@@ -11,11 +11,23 @@ while True:
     choice = input("Choose 1, 2, or 3: ")
 
     if choice == "1":
-        print("Caesar selected. Implementation coming next.")
-    elif choice == "2":
-        print("Fernet selected. Implementation coming next.")
-    elif choice == "3":
-        print("Goodbye!")
-        break
-    else:
-        print("Invalid choice. Please enter 1, 2, or 3.")
+        operation = input("1. Encrypt / 2. Decrypt: ")
+
+        if operation != "1" and operation != "2":
+            print("Invalid operation.")
+            continue
+
+        text = input("Enter text: ")
+
+        try:
+            shift = int(input("Enter shift: "))
+        except ValueError:
+            print("Shift must be a whole number.")
+            continue
+
+        if operation == "1":
+            result = encrypt(text, shift)
+        else:
+            result = decrypt(text, shift)
+
+        print("Result:", result)
