@@ -1,3 +1,5 @@
+from caeser import encrypt, decrypt
+
 print("Basic Text Encryption and Decryption Tool")
 
 while True:
