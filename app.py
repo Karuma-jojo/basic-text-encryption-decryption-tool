@@ -2,12 +2,13 @@ import streamlit as st
 from cryptography.fernet import InvalidToken
 import caeser
 import fernet_cipher
+import vigenere_cipher
 
 
 st.set_page_config(page_title="Text Encryption Tool", page_icon="🔐")
 st.title("Text Encryption Tool")
 
-cipher = st.selectbox("Choose a cipher", ["Caesar", "Fernet"])
+cipher = st.selectbox("Choose a cipher", ["Caesar", "Vigenère", "Fernet"])
 operation = st.radio("Operation", ["Encrypt", "Decrypt"], horizontal=True)
 
 # This copy keeps the key when the Fernet controls are hidden.
@@ -30,6 +31,27 @@ if cipher == "Caesar":
 
 DECRYPT(text, shift)
   Encrypt the text using the negative of the shift."""
+elif cipher == "Vigenère":
+    keyword = st.text_input("Keyword (English letters only)", value="cats")
+    pseudocode = """TRANSFORM(text, keyword, direction)
+  Reject an empty keyword or one containing anything except English letters.
+  Convert the keyword to lowercase.
+  Start with an empty result and key_position = 0.
+  For each character:
+    If it is not an English letter, copy it unchanged and continue.
+    Choose the uppercase or lowercase alphabet to match the letter.
+    Find the letter's position from 0 to 25.
+    Find the shift from keyword[key_position], using a = 0 through z = 25.
+    new_position = (position + direction * shift) modulo 26.
+    Append the letter at new_position.
+    key_position = (key_position + 1) modulo keyword length.
+  Return the result.
+
+ENCRYPT(text, keyword)
+  Transform the text using direction +1 to add the shifts.
+
+DECRYPT(text, keyword)
+  Transform the text using direction -1 to subtract the shifts."""
 else:
     if "fernet_key_input" not in st.session_state:
         st.session_state["fernet_key_input"] = st.session_state["saved_fernet_key"]
@@ -76,6 +98,14 @@ if st.button(operation, type="primary"):
                 result = caeser.encrypt(text, shift)
             else:
                 result = caeser.decrypt(text, shift)
+    elif cipher == "Vigenère":
+        try:
+            if operation == "Encrypt":
+                result = vigenere_cipher.encrypt(text, keyword)
+            else:
+                result = vigenere_cipher.decrypt(text, keyword)
+        except ValueError as error:
+            st.error(str(error))
     elif not key:
         st.error("Generate or paste your secret key first.")
     else:
